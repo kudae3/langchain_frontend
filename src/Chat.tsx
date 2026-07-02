@@ -8,8 +8,11 @@ import { Thread } from "@/components/thread";
 import { toThreadMessages } from "./toThread";
 
 export function Chat() {
-  const [lcMessages, setLcMessages] = useState<(HumanMessage | AIMessage)[]>([]);
-  const [conversationId] = useState<string>(() => crypto.randomUUID()); // fixed per session
+  const userName = "Kudae Sithu"; // Replace with actual user name later
+  const [lcMessages, setLcMessages] = useState<(HumanMessage | AIMessage)[]>(() => [
+    new AIMessage(`Hi ${userName}, how can I assist you today?`),
+  ]);
+  const [conversationId] = useState<string>(() => crypto.randomUUID()); 
 
   const onNew = useCallback(async (message: AppendMessage) => {
     const text = message.content.filter((c) => c.type === "text").map((c) => c.text).join("");
@@ -19,7 +22,7 @@ export function Chat() {
       const res = await fetch("http://localhost:3000/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, threadId: conversationId }),
+        body: JSON.stringify({ message: text, threadId: conversationId, userName: userName }),
       });
 
       if (!res.ok) {
